@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#064e3b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ثبت امتیاز دومینه</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vazirmatn Font for Persian Typography -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        felt: {
+                            800: '#064e3b',
+                            900: '#022c22',
+                            950: '#011c15'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #022c22;
+            color: #f8fafc;
+            overscroll-behavior-y: contain;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(2, 44, 34, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 9999px;
+        }
+
+        /* Subtle Domino Felt Pattern */
+        .bg-felt-pattern {
+            background-color: #022c22;
+            background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.8); }
+        }
+        .winner-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Keep tabular numbers aligned nicely */
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="bg-felt-pattern h-[100dvh] w-full overflow-hidden flex flex-col items-center justify-center">
+
+    <!-- App Container (Mobile First Wrapper) -->
+    <div class="w-full max-w-md h-full flex flex-col bg-slate-900/80 backdrop-blur-md shadow-2xl border-x border-emerald-900/40 relative overflow-hidden">
+
+        <!-- ================= TOP HEADER ================= -->
+        <header class="h-14 px-4 bg-slate-900/95 border-b border-emerald-800/40 flex items-center justify-between shrink-0 z-20">
+            <!-- Hamburger Menu Button -->
+            <button id="btn-open-drawer" class="w-10 h-10 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-800/50 flex items-center justify-center text-emerald-400 active:scale-95 transition relative" title="تاریخچه بازی‌ها">
+                <i class="fa-solid fa-bars text-lg"></i>
+                <span id="history-count-badge" class="hidden absolute -top-1 -left-1 bg-amber-500 text-slate-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">۰</span>
+            </button>
+
+            <!-- App Title with Domino Icon -->
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-5 bg-amber-100 rounded border border-amber-300 flex items-center justify-between px-1 shadow-sm transform -rotate-6">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-900"></span>
+                    <span class="w-[1px] h-3.5 bg-slate-400"></span>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="w-1 h-1 rounded-full bg-emerald-700"></span>
+                        <span class="w-1 h-1 rounded-full bg-emerald-700"></span>
+                    </div>
+                </div>
+                <h1 class="font-bold text-base tracking-wide text-emerald-50">امتیاز شمار دومینه</h1>
+            </div>
+
+            <!-- Home Button -->
+            <button id="btn-go-home" class="w-10 h-10 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-800/50 flex items-center justify-center text-emerald-400 active:scale-95 transition invisible" title="صفحه اصلی">
+                <i class="fa-solid fa-house text-base"></i>
+            </button>
+        </header>
+
+        <!-- ================= VIEW 1: HOME SCREEN ================= -->
+        <main id="view-home" class="flex-1 flex flex-col justify-between p-6 overflow-y-auto">
+            <div class="my-auto flex flex-col items-center text-center">
+                <!-- Decorative Domino Tile Graphic -->
+                <div class="relative mb-6">
+                    <div class="w-24 h-40 bg-gradient-to-b from-amber-50 to-amber-100 rounded-2xl border-2 border-amber-200 shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col justify-between p-3 transform -rotate-6">
+                        <div class="grid grid-cols-3 gap-1 place-items-center flex-1">
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-700"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                        </div>
+                        <div class="h-1 w-full bg-slate-800 rounded-full my-1"></div>
+                        <div class="grid grid-cols-3 gap-1 place-items-center flex-1">
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                            <span></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-900"></span>
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-2 -right-4 bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded-full shadow-lg border border-amber-300">
+                        ۱۰۱ امتیازی
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-black text-white mb-2">دفترچه دیجیتال دومینه</h2>
+                <p class="text-sm text-emerald-200/70 max-w-xs leading-relaxed mb-8">
+                    ثبت سریع و دقیق امتیازات هر دست، محاسبه خودکار مجموع امتیازها تا سقف ۱۰۱ و ذخیره تاریخچه کامل رقابت‌ها
+                </p>
+
+                <!-- Primary Action Buttons -->
+                <div class="w-full space-y-3.5 max-w-xs">
+                    <!-- Continue Game Button -->
+                    <button id="btn-home-continue" class="w-full py-4 px-5 rounded-2xl bg-gradient-to-l from-amber-500 to-amber-600 text-slate-950 font-extrabold text-lg shadow-lg shadow-amber-500/20 flex items-center justify-between active:scale-98 transition disabled:opacity-40 disabled:pointer-events-none">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-play text-base"></i>
+                            <span>ادامه بازی</span>
+                        </div>
+                        <span id="continue-badge-info" class="text-xs font-bold bg-slate-950/20 px-2.5 py-1 rounded-lg">
+                            بدون بازی فعال
+                        </span>
+                    </button>
+
+                    <!-- New Game Button -->
+                    <button id="btn-home-new" class="w-full py-4 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-lg shadow-lg shadow-emerald-600/25 flex items-center justify-between active:scale-98 transition border border-emerald-400/30">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-plus text-base"></i>
+                            <span>بازی جدید</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-left text-sm opacity-75"></i>
+                    </button>
+
+                    <!-- Open History Shortcut -->
+                    <button id="btn-home-history" class="w-full py-3 px-5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 text-emerald-200 font-semibold text-sm flex items-center justify-center gap-2 border border-slate-700/70 active:scale-98 transition">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>مشاهده تاریخچه بازی‌های گذشته</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Info -->
+            <div class="text-center text-[11px] text-emerald-400/50 pt-4">
+                قابل نصب روی موبایل (PWA) • ذخیره خودکار در حافظه دستگاه
+            </div>
+        </main>
+
+        <!-- ================= VIEW 2: ACTIVE GAME SCREEN ================= -->
+        <main id="view-game" class="hidden flex-1 flex flex-col overflow-hidden">
+            
+            <!-- Classic Scoreboard Header (3 Exact Hierarchical Rows) -->
+            <section class="bg-slate-900/95 pt-3 pb-2 px-4 shadow-md border-b-2 border-emerald-600/40 shrink-0">
+                
+                <!-- Helper Labels -->
+                <div class="grid grid-cols-2 text-center text-[10px] text-emerald-400/60 font-medium mb-0.5">
+                    <span>دست‌های برده</span>
+                    <span>دست‌های برده</span>
+                </div>
+
+                <!-- ROW 1: Hands / Sets Won (0 | 1) -->
+                <div class="grid grid-cols-2 items-center text-center relative py-1">
+                    <!-- Vertical Pipe | -->
+                    <div class="absolute inset-y-1 left-1/2 -translate-x-1/2 w-[2px] bg-emerald-700/50 rounded-full"></div>
+                    
+                    <div class="flex items-center justify-center gap-2">
+                        <span id="sets-team-1" class="text-2xl font-black text-amber-400 bg-amber-500/10 border border-amber-500/30 px-4 py-0.5 rounded-xl tabular-nums">۰</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                        <span id="sets-team-2" class="text-2xl font-black text-amber-400 bg-amber-500/10 border border-amber-500/30 px-4 py-0.5 rounded-xl tabular-nums">۰</span>
+                    </div>
+                </div>
+
+                <!-- ROW 2: Current Round Total Score (31 | 61) -->
+                <div class="grid grid-cols-2 items-center text-center relative my-1.5 py-2 bg-emerald-950/60 rounded-2xl border border-emerald-800/40">
+                    <!-- Vertical Pipe | -->
+                    <div class="absolute inset-y-2 left-1/2 -translate-x-1/2 w-[2px] bg-emerald-500/40"></div>
+
+                    <!-- Team 1 Total + Progress to 101 -->
+                    <div class="px-3 flex flex-col items-center">
+                        <span id="total-team-1" class="text-4xl font-black text-white tracking-tight tabular-nums">۰</span>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                            <div id="progress-team-1" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <span id="rem-team-1" class="text-[10px] text-emerald-300/60 mt-1">۱۰۱ تا برد</span>
+                    </div>
+
+                    <!-- Team 2 Total + Progress to 101 -->
+                    <div class="px-3 flex flex-col items-center">
+                        <span id="total-team-2" class="text-4xl font-black text-white tracking-tight tabular-nums">۰</span>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                            <div id="progress-team-2" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <span id="rem-team-2" class="text-[10px] text-emerald-300/60 mt-1">۱۰۱ تا برد</span>
+                    </div>
+                </div>
+
+                <!-- ROW 3: Team Names (Team 1 | Team 2) -->
+                <div class="grid grid-cols-2 items-center text-center relative pt-1">
+                    <!-- Vertical Pipe | -->
+                    <div class="absolute inset-y-1 left-1/2 -translate-x-1/2 w-[2px] bg-emerald-700/50"></div>
+
+                    <button id="btn-edit-name-1" class="px-2 py-1 rounded-lg hover:bg-slate-800/60 flex items-center justify-center gap-1.5 group truncate">
+                        <span id="name-team-1" class="font-extrabold text-sm text-emerald-200 truncate">تیم ۱</span>
+                        <i class="fa-solid fa-pen text-[10px] text-emerald-500/60 group-hover:text-emerald-400"></i>
+                    </button>
+
+                    <button id="btn-edit-name-2" class="px-2 py-1 rounded-lg hover:bg-slate-800/60 flex items-center justify-center gap-1.5 group truncate">
+                        <span id="name-team-2" class="font-extrabold text-sm text-emerald-200 truncate">تیم ۲</span>
+                        <i class="fa-solid fa-pen text-[10px] text-emerald-500/60 group-hover:text-emerald-400"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ROW 4+: Turn-by-Turn Score List (1.   | 16) -->
+            <section id="turns-scroll-container" class="flex-1 overflow-y-auto px-4 py-2 relative">
+                <!-- Continuous vertical center line backdrop -->
+                <div class="fixed-center-line pointer-events-none"></div>
+
+                <div id="turns-list" class="divide-y divide-emerald-900/30 text-base">
+                    <!-- Dynamic turn rows injected here -->
+                </div>
+
+                <!-- Empty State when no turns exist in current hand -->
+                <div id="empty-turns-state" class="h-full flex flex-col items-center justify-center text-center py-8 text-emerald-300/40">
+                    <i class="fa-solid fa-clipboard-list text-3xl mb-2"></i>
+                    <p class="text-xs">هنوز امتیازی در این دست ثبت نشده است.</p>
+                    <p class="text-[11px] mt-0.5">از پنل پایین امتیاز تیم برنده دور را وارد کنید.</p>
+                </div>
+            </section>
+
+            <!-- Bottom Ergonomic Score Entry Panel -->
+            <section class="bg-slate-900 border-t border-emerald-800/60 p-3 shrink-0 z-10 shadow-[0_-10px_25px_rgba(0,0,0,0.4)]">
+                <!-- Team Selector Tabs + Undo Action -->
+                <div class="flex items-center gap-2 mb-2.5">
+                    <div class="flex-1 grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                        <button id="select-team-1" type="button" class="py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow">
+                            <span class="w-2 h-2 rounded-full bg-white"></span>
+                            <span id="input-label-team-1" class="truncate">تیم ۱</span>
+                        </button>
+                        <button id="select-team-2" type="button" class="py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                            <span class="w-2 h-2 rounded-full bg-transparent"></span>
+                            <span id="input-label-team-2" class="truncate">تیم ۲</span>
+                        </button>
+                    </div>
+
+                    <!-- Undo Last Row Button -->
+                    <button id="btn-undo-turn" type="button" class="h-9 px-3 rounded-xl bg-slate-800 hover:bg-rose-950/80 text-slate-300 hover:text-rose-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition disabled:opacity-30 disabled:pointer-events-none" title="حذف آخرین سطر">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>اصلاح</span>
+                    </button>
+                </div>
+
+                <!-- Score Input Form + Quick Domino Multiples -->
+                <form id="score-entry-form" class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <input 
+                            id="score-input" 
+                            type="number" 
+                            inputmode="numeric" 
+                            pattern="[0-9]*"
+                            min="1" 
+                            max="200" 
+                            placeholder="امتیاز این دور (مثلاً ۱۶)..." 
+                            class="w-full h-11 bg-slate-950 border border-emerald-700/60 focus:border-emerald-400 rounded-xl px-3.5 text-white font-bold text-base placeholder:text-slate-500 placeholder:font-normal focus:outline-none tabular-nums"
+                        >
+                    </div>
+                    <button type="submit" class="h-11 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 transition shrink-0">
+                        <span>ثبت</span>
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </form>
+
+                <!-- Quick Add Buttons (Useful for fast mobile entry) -->
+                <div class="grid grid-cols-6 gap-1.5 mt-2">
+                    <button type="button" data-quick-score="5" class="quick-score-btn py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-slate-700/80 active:scale-95 transition">+۵</button>
+                    <button type="button" data-quick-score="10" class="quick-score-btn py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-slate-700/80 active:scale-95 transition">+۱۰</button>
+                    <button type="button" data-quick-score="15" class="quick-score-btn py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-slate-700/80 active:scale-95 transition">+۱۵</button>
+                    <button type="button" data-quick-score="20" class="quick-score-btn py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-slate-700/80 active:scale-95 transition">+۲۰</button>
+                    <button type="button" data-quick-score="25" class="quick-score-btn py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-slate-700/80 active:scale-95 transition">+۲۵</button>
+                    <button type="button" id="btn-end-match-manual" class="py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 font-semibold text-[11px] border border-amber-500/30 active:scale-95 transition">اتمام بازی</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- ================= HAMBURGER DRAWER: MATCH HISTORY ================= -->
+        <div id="history-drawer-backdrop" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xs z-40 transition-opacity"></div>
+        
+        <aside id="history-drawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-slate-900 border-l border-emerald-800/50 z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col shadow-2xl">
+            <!-- Drawer Header -->
+            <div class="h-14 px-4 bg-slate-950 border-b border-emerald-900/50 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                    <i class="fa-solid fa-trophy text-amber-400"></i>
+                    <span>تاریخچه بازی‌های گذشته</span>
+                </div>
+                <button id="btn-close-drawer" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- History List Container -->
+            <div id="history-list-container" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+                <!-- Dynamic History Cards -->
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="p-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
+                <button id="btn-clear-history" class="w-full py-2.5 px-3 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 border border-rose-800/50 text-xs font-bold flex items-center justify-center gap-2 active:scale-98 transition">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>پاک کردن کل تاریخچه</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ================= MODAL 1: 101+ WIN CELEBRATION MODAL ================= -->
+        <div id="win-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-amber-500/60 rounded-3xl p-6 text-center shadow-2xl winner-glow animate-pop">
+                <!-- Trophy Icon -->
+                <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center mx-auto mb-4 text-amber-400 text-3xl shadow-inner">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+
+                <!-- Winner Title -->
+                <h3 id="win-modal-title" class="text-xl font-black text-white mb-1">
+                    تیم ۱ برنده شد!
+                </h3>
+                <p class="text-xs text-emerald-300/80 mb-4">
+                    مجموع امتیازات از مرز ۱۰۱ عبور کرد
+                </p>
+
+                <!-- Hand Score Box -->
+                <div class="bg-emerald-950/70 border border-emerald-800/60 rounded-2xl p-3 mb-6 grid grid-cols-2 items-center relative">
+                    <div class="absolute inset-y-2 left-1/2 -translate-x-1/2 w-[1px] bg-emerald-700/50"></div>
+                    <div>
+                        <div id="win-modal-team1-name" class="text-xs text-emerald-300 truncate px-1">تیم ۱</div>
+                        <div id="win-modal-team1-score" class="text-2xl font-black text-white tabular-nums mt-0.5">۱۰۴</div>
+                    </div>
+                    <div>
+                        <div id="win-modal-team2-name" class="text-xs text-emerald-300 truncate px-1">تیم ۲</div>
+                        <div id="win-modal-team2-score" class="text-2xl font-black text-white tabular-nums mt-0.5">۶۱</div>
+                    </div>
+                </div>
+
+                <!-- Two Required Questions/Buttons -->
+                <div class="space-y-2.5">
+                    <!-- Option 1: ادامه میدید؟ -->
+                    <button id="btn-win-continue" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 active:scale-98 transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>ادامه میدید؟ (دست بعدی)</span>
+                    </button>
+
+                    <!-- Option 2: پایان بازی -->
+                    <button id="btn-win-end" class="w-full py-3.5 px-4 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 font-extrabold text-sm flex items-center justify-center gap-2 active:scale-98 transition">
+                        <i class="fa-solid fa-flag-checkered"></i>
+                        <span>پایان بازی و ثبت در تاریخچه</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODAL 2: NEW GAME / EDIT TEAMS MODAL ================= -->
+        <div id="setup-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-slate-900 border border-emerald-700/50 rounded-3xl p-5 shadow-2xl animate-pop">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="setup-modal-title" class="font-extrabold text-base text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-emerald-400"></i>
+                        <span>شروع بازی جدید</span>
+                    </h3>
+                    <button id="btn-close-setup" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Warning if an unfinished active game exists -->
+                <div id="unfinished-game-warning" class="hidden mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs leading-relaxed">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400 ml-1"></i>
+                    یک بازی ناتمام در جریان است. با شروع بازی جدید، بازی قبلی در تاریخچه ذخیره شده و بازی نو آغاز می‌شود.
+                </div>
+
+                <form id="setup-form" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs text-emerald-300 mb-1 font-semibold">نام تیم اول:</label>
+                        <input id="input-setup-team1" type="text" maxlength="20" placeholder="تیم ۱" class="w-full h-11 bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-3.5 text-white text-sm font-bold focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-emerald-300 mb-1 font-semibold">نام تیم دوم:</label>
+                        <input id="input-setup-team2" type="text" maxlength="20" placeholder="تیم ۲" class="w-full h-11 bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-3.5 text-white text-sm font-bold focus:outline-none">
+                    </div>
+
+                    <div class="pt-2 flex gap-2">
+                        <button type="submit" class="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/20 active:scale-98 transition">
+                            شروع رقابت
+                        </button>
+                        <button type="button" id="btn-cancel-setup" class="py-3 px-4 rounded-xl bg-slate-800 text-slate-300 font-bold text-sm">
+                            انصراف
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= MODAL 3: CUSTOM CONFIRMATION DIALOG ================= -->
+        <div id="confirm-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="w-full max-w-xs bg-slate-900 border border-slate-700 rounded-2xl p-5 text-center shadow-2xl animate-pop">
+                <p id="confirm-modal-message" class="text-sm text-white font-semibold mb-4 leading-relaxed"></p>
+                <div class="flex gap-2">
+                    <button id="btn-confirm-yes" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs">تأیید</button>
+                    <button id="btn-confirm-no" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs">لغو</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-950/95 text-emerald-300 border border-emerald-600/50 px-4 py-2 rounded-full text-xs font-bold shadow-xl pointer-events-none opacity-0 transition-opacity duration-300">
+            پیام سیستم
+        </div>
+
+    </div>
+
+    <script>
+        /**************************************************************
+         * 1. PERSIAN DIGIT & FORMATTING UTILITIES
+         **************************************************************/
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        
+        function toPersianNum(num) {
+            if (num === null || num === undefined || num === '') return '';
+            return String(num).replace(/\d/g, d => persianDigits[d]);
+        }
+
+        function formatPersianDate(isoString) {
+            try {
+                const date = new Date(isoString);
+                return new Intl.DateTimeFormat('fa-IR', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).format(date);
+            } catch (e) {
+                return '';
+            }
+        }
+
+        /**************************************************************
+         * 2. STATE MANAGEMENT & LOCALSTORAGE KEYS
+         **************************************************************/
+        const STORAGE_KEY_ACTIVE = 'domino_pwa_active_game_v1';
+        const STORAGE_KEY_HISTORY = 'domino_pwa_match_history_v1';
+        const WINNING_SCORE = 101;
+
+        let activeGame = null;
+        let matchHistory = [];
+        let selectedTeamForInput = 1; // 1 or 2
+        let isEditingNamesOnly = false;
+        let pendingWinningTeam = null; // 1 or 2 when 101+ modal triggers
+
+        function loadStateFromStorage() {
+            try {
+                const rawActive = localStorage.getItem(STORAGE_KEY_ACTIVE);
+                activeGame = rawActive ? JSON.parse(rawActive) : null;
+            } catch (e) {
+                activeGame = null;
+            }
+
+            try {
+                const rawHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
+                matchHistory = rawHistory ? JSON.parse(rawHistory) : [];
+            } catch (e) {
+                matchHistory = [];
+            }
+        }
+
+        function saveActiveGame() {
+            try {
+                if (activeGame) {
+                    localStorage.setItem(STORAGE_KEY_ACTIVE, JSON.stringify(activeGame));
+                } else {
+                    localStorage.removeItem(STORAGE_KEY_ACTIVE);
+                }
+            } catch (e) {
+                console.error('Failed to save active game', e);
+            }
+            updateHomeScreenState();
+        }
+
+        function saveHistory() {
+            try {
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(matchHistory));
+            } catch (e) {
+                console.error('Failed to save history', e);
+            }
+            renderHistoryDrawer();
+        }
+
+        /**************************************************************
+         * 3. GAME LOGIC & SCORE CALCULATIONS
+         **************************************************************/
+        function createNewGame(team1Name, team2Name) {
+            // If an active game has progress (sets > 0 or turns > 0), archive it first
+            if (activeGame && (activeGame.sets1 > 0 || activeGame.sets2 > 0 || activeGame.currentTurns.length > 0)) {
+                archiveCurrentMatchToHistory();
+            }
+
+            activeGame = {
+                id: Date.now().toString(),
+                startedAt: new Date().toISOString(),
+                team1Name: (team1Name || '').trim() || 'تیم ۱',
+                team2Name: (team2Name || '').trim() || 'تیم ۲',
+                sets1: 0,
+                sets2: 0,
+                currentTurns: [], // Array of { t1: number|null, t2: number|null }
+                pastHands: []     // Completed hands [{ s1, s2, winner }]
+            };
+
+            selectedTeamForInput = 1;
+            saveActiveGame();
+            switchView('game');
+            renderGameBoard();
+        }
+
+        function getCurrentRoundTotals() {
+            if (!activeGame) return { sum1: 0, sum2: 0 };
+            let sum1 = 0;
+            let sum2 = 0;
+            for (const row of activeGame.currentTurns) {
+                if (row.t1) sum1 += Number(row.t1);
+                if (row.t2) sum2 += Number(row.t2);
+            }
+            return { sum1, sum2 };
+        }
+
+        function addScoreTurn(teamNumber, points) {
+            if (!activeGame) return;
+            const cleanPoints = parseInt(points, 10);
+            if (isNaN(cleanPoints) || cleanPoints <= 0) {
+                showToast('لطفاً یک امتیاز معتبر وارد کنید');
+                return;
+            }
+
+            const newRow = {
+                t1: teamNumber === 1 ? cleanPoints : null,
+                t2: teamNumber === 2 ? cleanPoints : null
+            };
+
+            activeGame.currentTurns.push(newRow);
+            saveActiveGame();
+            renderGameBoard(true);
+
+            // Check if either team reached 101 or more
+            const { sum1, sum2 } = getCurrentRoundTotals();
+            if (sum1 >= WINNING_SCORE || sum2 >= WINNING_SCORE) {
+                const winner = sum1 >= WINNING_SCORE ? 1 : 2;
+                openWinModal(winner, sum1, sum2);
+            }
+        }
+
+        function undoLastTurn() {
+            if (!activeGame || activeGame.currentTurns.length === 0) return;
+            activeGame.currentTurns.pop();
+            saveActiveGame();
+            renderGameBoard();
+            showToast('آخرین امتیاز حذف شد');
+        }
+
+        function archiveCurrentMatchToHistory() {
+            if (!activeGame) return;
+            const { sum1, sum2 } = getCurrentRoundTotals();
+            const record = {
+                id: activeGame.id,
+                date: new Date().toISOString(),
+                team1Name: activeGame.team1Name,
+                team2Name: activeGame.team2Name,
+                sets1: activeGame.sets1,
+                sets2: activeGame.sets2,
+                pastHands: [...(activeGame.pastHands || [])]
+            };
+
+            // If there was an unfinished hand with points when manually ending, include its partial scores
+            if (sum1 > 0 || sum2 > 0) {
+                record.pastHands.push({
+                    s1: sum1,
+                    s2: sum2,
+                    winner: sum1 === sum2 ? 0 : (sum1 > sum2 ? 1 : 2),
+                    partial: true
+                });
+            }
+
+            matchHistory.unshift(record);
+            saveHistory();
+        }
+
+        /**************************************************************
+         * 4. WIN MODAL ACTIONS (101+ POINTS)
+         **************************************************************/
+        function openWinModal(winnerTeam, sum1, sum2) {
+            pendingWinningTeam = winnerTeam;
+            const winnerName = winnerTeam === 1 ? activeGame.team1Name : activeGame.team2Name;
+
+            document.getElementById('win-modal-title').textContent = `${winnerName} برنده شد!`;
+            document.getElementById('win-modal-team1-name').textContent = activeGame.team1Name;
+            document.getElementById('win-modal-team2-name').textContent = activeGame.team2Name;
+            document.getElementById('win-modal-team1-score').textContent = toPersianNum(sum1);
+            document.getElementById('win-modal-team2-score').textContent = toPersianNum(sum2);
+
+            document.getElementById('win-modal').classList.remove('hidden');
+        }
+
+        // Action 1: "ادامه میدید؟" -> Clear turn scores, increment winning team's set count in Row 1
+        function handleContinueNextHand() {
+            if (!activeGame || !pendingWinningTeam) return;
+            const { sum1, sum2 } = getCurrentRoundTotals();
+
+            if (pendingWinningTeam === 1) {
+                activeGame.sets1 += 1;
+            } else {
+                activeGame.sets2 += 1;
+            }
+
+            activeGame.pastHands.push({
+                s1: sum1,
+                s2: sum2,
+                winner: pendingWinningTeam
+            });
+
+            // Clear turn scores for the next hand
+            activeGame.currentTurns = [];
+            pendingWinningTeam = null;
+
+            document.getElementById('win-modal').classList.add('hidden');
+            saveActiveGame();
+            renderGameBoard();
+            showToast('دست جدید آغاز شد!');
+        }
+
+        // Action 2: "پایان بازی" -> Increment winning team's set count, save to history, finish match
+        function handleEndMatchAfterWin() {
+            if (!activeGame || !pendingWinningTeam) return;
+            const { sum1, sum2 } = getCurrentRoundTotals();
+
+            if (pendingWinningTeam === 1) {
+                activeGame.sets1 += 1;
+            } else {
+                activeGame.sets2 += 1;
+            }
+
+            activeGame.pastHands.push({
+                s1: sum1,
+                s2: sum2,
+                winner: pendingWinningTeam
+            });
+
+            activeGame.currentTurns = [];
+            pendingWinningTeam = null;
+
+            document.getElementById('win-modal').classList.add('hidden');
+
+            // Save completed game to history & clear active game
+            archiveCurrentMatchToHistory();
+            activeGame = null;
+            saveActiveGame();
+            switchView('home');
+            openDrawer(); // Show the saved match in the history drawer right away
+            showToast('بازی با موفقیت در تاریخچه ثبت شد');
+        }
+
+        /**************************************************************
+         * 5. UI RENDERING & VIEW SWITCHING
+         **************************************************************/
+        function switchView(viewName) {
+            const homeView = document.getElementById('view-home');
+            const gameView = document.getElementById('view-game');
+            const homeBtn = document.getElementById('btn-go-home');
+
+            if (viewName === 'game' && activeGame) {
+                homeView.classList.add('hidden');
+                gameView.classList.remove('hidden');
+                homeBtn.classList.remove('invisible');
+                renderGameBoard();
+            } else {
+                gameView.classList.add('hidden');
+                homeView.classList.remove('hidden');
+                homeBtn.classList.add('invisible');
+                updateHomeScreenState();
+            }
+        }
+
+        function updateHomeScreenState() {
+            const continueBtn = document.getElementById('btn-home-continue');
+            const badgeInfo = document.getElementById('continue-badge-info');
+
+            if (activeGame) {
+                continueBtn.disabled = false;
+                badgeInfo.textContent = `${activeGame.team1Name} (${toPersianNum(activeGame.sets1)}) - (${toPersianNum(activeGame.sets2)}) ${activeGame.team2Name}`;
+            } else {
+                continueBtn.disabled = true;
+                badgeInfo.textContent = 'بدون بازی فعال';
+            }
+        }
+
+        function renderGameBoard(scrollToBottom = false) {
+            if (!activeGame) return;
+
+            // Row 1: Sets Won (0 | 1)
+            document.getElementById('sets-team-1').textContent = toPersianNum(activeGame.sets1);
+            document.getElementById('sets-team-2').textContent = toPersianNum(activeGame.sets2);
+
+            // Row 2: Current Round Totals (31 | 61)
+            const { sum1, sum2 } = getCurrentRoundTotals();
+            document.getElementById('total-team-1').textContent = toPersianNum(sum1);
+            document.getElementById('total-team-2').textContent = toPersianNum(sum2);
+
+            const pct1 = Math.min(100, Math.round((sum1 / WINNING_SCORE) * 100));
+            const pct2 = Math.min(100, Math.round((sum2 / WINNING_SCORE) * 100));
+            document.getElementById('progress-team-1').style.width = `${pct1}%`;
+            document.getElementById('progress-team-2').style.width = `${pct2}%`;
+
+            const rem1 = Math.max(0, WINNING_SCORE - sum1);
+            const rem2 = Math.max(0, WINNING_SCORE - sum2);
+            document.getElementById('rem-team-1').textContent = rem1 > 0 ? `${toPersianNum(rem1)} تا برد` : 'برنده دست!';
+            document.getElementById('rem-team-2').textContent = rem2 > 0 ? `${toPersianNum(rem2)} تا برد` : 'برنده دست!';
+
+            // Row 3: Team Names
+            document.getElementById('name-team-1').textContent = activeGame.team1Name;
+            document.getElementById('name-team-2').textContent = activeGame.team2Name;
+            document.getElementById('input-label-team-1').textContent = activeGame.team1Name;
+            document.getElementById('input-label-team-2').textContent = activeGame.team2Name;
+
+            // Row 4+: Turn-by-Turn Score List
+            const turnsListEl = document.getElementById('turns-list');
+            const emptyStateEl = document.getElementById('empty-turns-state');
+            const undoBtn = document.getElementById('btn-undo-turn');
+
+            turnsListEl.innerHTML = '';
+
+            if (activeGame.currentTurns.length === 0) {
+                emptyStateEl.classList.remove('hidden');
+                undoBtn.disabled = true;
+            } else {
+                emptyStateEl.classList.add('hidden');
+                undoBtn.disabled = false;
+
+                activeGame.currentTurns.forEach((turn, idx) => {
+                    const rowNumber = toPersianNum(idx + 1);
+                    const score1 = turn.t1 !== null ? toPersianNum(turn.t1) : '';
+                    const score2 = turn.t2 !== null ? toPersianNum(turn.t2) : '';
+
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'grid grid-cols-2 items-center py-2.5 px-2 relative hover:bg-emerald-950/30 transition rounded-lg';
+                    rowEl.innerHTML = `
+                        <!-- Vertical Divider Pipe | -->
+                        <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[2px] bg-emerald-700/40"></div>
+                        
+                        <!-- Right Column (Team 1 in RTL) with Row Index -->
+                        <div class="flex items-center pr-1 pl-4">
+                            <span class="text-xs font-bold text-emerald-500/70 w-7 text-right tabular-nums">${rowNumber}.</span>
+                            <span class="flex-1 text-center font-extrabold text-lg ${turn.t1 ? 'text-white' : 'text-transparent'} tabular-nums">
+                                ${score1 || '—'}
+                            </span>
+                        </div>
+
+                        <!-- Left Column (Team 2 in RTL) -->
+                        <div class="flex items-center justify-center pl-1 pr-4">
+                            <span class="font-extrabold text-lg ${turn.t2 ? 'text-white' : 'text-transparent'} tabular-nums">
+                                ${score2 || '—'}
+                            </span>
+                        </div>
+                    `;
+                    turnsListEl.appendChild(rowEl);
+                });
+
+                if (scrollToBottom) {
+                    const scrollContainer = document.getElementById('turns-scroll-container');
+                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                }
+            }
+
+            updateSelectedTeamButtons();
+        }
+
+        function updateSelectedTeamButtons() {
+            const btn1 = document.getElementById('select-team-1');
+            const btn2 = document.getElementById('select-team-2');
+
+            if (selectedTeamForInput === 1) {
+                btn1.className = 'py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow';
+                btn1.firstElementChild.className = 'w-2 h-2 rounded-full bg-white';
+                btn2.className = 'py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white';
+                btn2.firstElementChild.className = 'w-2 h-2 rounded-full bg-transparent';
+            } else {
+                btn2.className = 'py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow';
+                btn2.firstElementChild.className = 'w-2 h-2 rounded-full bg-white';
+                btn1.className = 'py-2 px-2 rounded-lg font-bold text-xs transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white';
+                btn1.firstElementChild.className = 'w-2 h-2 rounded-full bg-transparent';
+            }
+        }
+
+        /**************************************************************
+         * 6. RENDER MATCH HISTORY DRAWER
+         **************************************************************/
+        function renderHistoryDrawer() {
+            const container = document.getElementById('history-list-container');
+            const badge = document.getElementById('history-count-badge');
+            const clearBtn = document.getElementById('btn-clear-history');
+
+            if (matchHistory.length > 0) {
+                badge.textContent = toPersianNum(matchHistory.length);
+                badge.classList.remove('hidden');
+                clearBtn.disabled = false;
+                clearBtn.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                badge.classList.add('hidden');
+                clearBtn.disabled = true;
+                clearBtn.classList.add('opacity-40', 'pointer-events-none');
+            }
+
+            container.innerHTML = '';
+
+            if (matchHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="h-64 flex flex-col items-center justify-center text-center text-slate-500 px-4">
+                        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-50"></i>
+                        <p class="text-xs font-semibold">تاریخچه بازی‌ها خالی است</p>
+                        <p class="text-[11px] mt-1 opacity-75">پس از پایان هر رقابت، نتیجه کامل دست‌ها در این بخش ذخیره می‌شود.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            matchHistory.forEach((item, index) => {
+                const isTeam1Winner = item.sets1 > item.sets2;
+                const isTeam2Winner = item.sets2 > item.sets1;
+                const winnerText = isTeam1Winner ? `برنده: ${item.team1Name}` : (isTeam2Winner ? `برنده: ${item.team2Name}` : 'مساوی');
+
+                const handsHtml = (item.pastHands && item.pastHands.length > 0)
+                    ? item.pastHands.map((h, i) => `
+                        <div class="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/80 last:border-none">
+                            <span class="text-slate-400">دست ${toPersianNum(i + 1)}:</span>
+                            <span class="font-bold tabular-nums text-emerald-300">
+                                ${item.team1Name} (${toPersianNum(h.s1)}) — (${toPersianNum(h.s2)}) ${item.team2Name}
+                            </span>
+                        </div>
+                    `).join('')
+                    : '<div class="text-[11px] text-slate-500">جزئیات دست‌ها ثبت نشده</div>';
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-950/90 border border-emerald-900/40 rounded-2xl p-3 shadow-md';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-[10px] text-slate-400 mb-2">
+                        <span><i class="fa-regular fa-calendar ml-1"></i>${formatPersianDate(item.date)}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">
+                                ${winnerText}
+                            </span>
+                            <button data-delete-index="${index}" class="btn-delete-history-item text-slate-500 hover:text-rose-400 px-1">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 items-center text-center bg-slate-900 rounded-xl p-2 border border-slate-800">
+                        <div class="font-bold text-xs text-white truncate px-1">${item.team1Name}</div>
+                        <div class="text-lg font-black text-amber-400 tabular-nums tracking-wider">
+                            ${toPersianNum(item.sets1)} | ${toPersianNum(item.sets2)}
+                        </div>
+                        <div class="font-bold text-xs text-white truncate px-1">${item.team2Name}</div>
+                    </div>
+
+                    <details class="mt-2 group">
+                        <summary class="text-[11px] text-emerald-400/80 cursor-pointer select-none flex items-center justify-between py-1">
+                            <span>ریز امتیازات دست‌ها (${toPersianNum((item.pastHands || []).length)} دست)</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="mt-1.5 pt-1.5 border-t border-slate-800 space-y-0.5">
+                            ${handsHtml}
+                        </div>
+                    </details>
+                `;
+                container.appendChild(card);
+            });
+
+            // Attach individual delete handlers
+            container.querySelectorAll('.btn-delete-history-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(e.currentTarget.getAttribute('data-delete-index'), 10);
+                    matchHistory.splice(idx, 1);
+                    saveHistory();
+                    showToast('مورد از تاریخچه حذف شد');
+                });
+            });
+        }
+
+        /**************************************************************
+         * 7. DRAWER, MODALS & TOAST HELPERS
+         **************************************************************/
+        function openDrawer() {
+            renderHistoryDrawer();
+            document.getElementById('history-drawer-backdrop').classList.remove('hidden');
+            document.getElementById('history-drawer').classList.remove('translate-x-full');
+        }
+
+        function closeDrawer() {
+            document.getElementById('history-drawer-backdrop').classList.add('hidden');
+            document.getElementById('history-drawer').classList.add('translate-x-full');
+        }
+
+        function openSetupModal(editMode = false) {
+            isEditingNamesOnly = editMode;
+            const modal = document.getElementById('setup-modal');
+            const titleEl = document.getElementById('setup-modal-title');
+            const warningEl = document.getElementById('unfinished-game-warning');
+            const input1 = document.getElementById('input-setup-team1');
+            const input2 = document.getElementById('input-setup-team2');
+
+            if (editMode && activeGame) {
+                titleEl.innerHTML = '<i class="fa-solid fa-pen text-emerald-400"></i><span>ویرایش نام تیم‌ها</span>';
+                warningEl.classList.add('hidden');
+                input1.value = activeGame.team1Name;
+                input2.value = activeGame.team2Name;
+            } else {
+                titleEl.innerHTML = '<i class="fa-solid fa-users text-emerald-400"></i><span>شروع بازی جدید</span>';
+                if (activeGame && (activeGame.sets1 > 0 || activeGame.sets2 > 0 || activeGame.currentTurns.length > 0)) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+                input1.value = 'تیم ۱';
+                input2.value = 'تیم ۲';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => input1.focus(), 100);
+        }
+
+        function closeSetupModal() {
+            document.getElementById('setup-modal').classList.add('hidden');
+        }
+
+        let confirmCallback = null;
+        function showConfirmDialog(message, onConfirm) {
+            document.getElementById('confirm-modal-message').textContent = message;
+            confirmCallback = onConfirm;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2200);
+        }
+
+        /**************************************************************
+         * 8. EVENT LISTENERS INITIALIZATION
+         **************************************************************/
+        function initEvents() {
+            // Header Navigation
+            document.getElementById('btn-open-drawer').addEventListener('click', openDrawer);
+            document.getElementById('btn-close-drawer').addEventListener('click', closeDrawer);
+            document.getElementById('history-drawer-backdrop').addEventListener('click', closeDrawer);
+            document.getElementById('btn-go-home').addEventListener('click', () => switchView('home'));
+
+            // Home Buttons
+            document.getElementById('btn-home-new').addEventListener('click', () => openSetupModal(false));
+            document.getElementById('btn-home-continue').addEventListener('click', () => {
+                if (activeGame) switchView('game');
+            });
+            document.getElementById('btn-home-history').addEventListener('click', openDrawer);
+
+            // Setup / Edit Names Modal
+            document.getElementById('btn-close-setup').addEventListener('click', closeSetupModal);
+            document.getElementById('btn-cancel-setup').addEventListener('click', closeSetupModal);
+            document.getElementById('setup-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const t1 = document.getElementById('input-setup-team1').value;
+                const t2 = document.getElementById('input-setup-team2').value;
+
+                if (isEditingNamesOnly && activeGame) {
+                    activeGame.team1Name = t1.trim() || 'تیم ۱';
+                    activeGame.team2Name = t2.trim() || 'تیم ۲';
+                    saveActiveGame();
+                    renderGameBoard();
+                    closeSetupModal();
+                    showToast('نام تیم‌ها بروزرسانی شد');
+                } else {
+                    closeSetupModal();
+                    createNewGame(t1, t2);
+                }
+            });
+
+            // Edit Team Names on Scoreboard Tap
+            document.getElementById('btn-edit-name-1').addEventListener('click', () => openSetupModal(true));
+            document.getElementById('btn-edit-name-2').addEventListener('click', () => openSetupModal(true));
+
+            // Team Selector for Score Input
+            document.getElementById('select-team-1').addEventListener('click', () => {
+                selectedTeamForInput = 1;
+                updateSelectedTeamButtons();
+            });
+            document.getElementById('select-team-2').addEventListener('click', () => {
+                selectedTeamForInput = 2;
+                updateSelectedTeamButtons();
+            });
+
+            // Score Form Submission
+            document.getElementById('score-entry-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const inputEl = document.getElementById('score-input');
+                const val = inputEl.value;
+                if (!val) return;
+                addScoreTurn(selectedTeamForInput, val);
+                inputEl.value = '';
+                inputEl.focus();
+            });
+
+            // Quick Score Buttons (+5, +10, etc.)
+            document.querySelectorAll('.quick-score-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const pts = btn.getAttribute('data-quick-score');
+                    addScoreTurn(selectedTeamForInput, pts);
+                });
+            });
+
+            // Undo Last Turn
+            document.getElementById('btn-undo-turn').addEventListener('click', undoLastTurn);
+
+            // Manual End Match Button
+            document.getElementById('btn-end-match-manual').addEventListener('click', () => {
+                if (!activeGame) return;
+                showConfirmDialog('آیا مایل به پایان بازی فعلی و ذخیره آن در تاریخچه هستید؟', () => {
+                    archiveCurrentMatchToHistory();
+                    activeGame = null;
+                    saveActiveGame();
+                    switchView('home');
+                    showToast('بازی در تاریخچه ذخیره شد');
+                });
+            });
+
+            // 101+ Win Modal Buttons
+            document.getElementById('btn-win-continue').addEventListener('click', handleContinueNextHand);
+            document.getElementById('btn-win-end').addEventListener('click', handleEndMatchAfterWin);
+
+            // Clear All History Button
+            document.getElementById('btn-clear-history').addEventListener('click', () => {
+                showConfirmDialog('آیا از حذف کامل تاریخچه بازی‌ها مطمئن هستید؟', () => {
+                    matchHistory = [];
+                    saveHistory();
+                    showToast('تاریخچه پاک شد');
+                });
+            });
+
+            // Custom Confirm Modal Actions
+            document.getElementById('btn-confirm-yes').addEventListener('click', () => {
+                document.getElementById('confirm-modal').classList.add('hidden');
+                if (typeof confirmCallback === 'function') confirmCallback();
+                confirmCallback = null;
+            });
+            document.getElementById('btn-confirm-no').addEventListener('click', () => {
+                document.getElementById('confirm-modal').classList.add('hidden');
+                confirmCallback = null;
+            });
+        }
+
+        /**************************************************************
+         * 9. INLINE PWA MANIFEST & SERVICE WORKER REGISTRATION
+         **************************************************************/
+        function setupLocalPWA() {
+            // Create SVG icon data URI for PWA installation
+            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <rect width="512" height="512" rx="110" fill="#022c22"/>
+                <rect x="136" y="64" width="240" height="384" rx="32" fill="#fef3c7" stroke="#f59e0b" stroke-width="12"/>
+                <line x1="156" y1="256" x2="356" y2="256" stroke="#1e293b" stroke-width="14" stroke-linecap="round"/>
+                <circle cx="256" cy="160" r="26" fill="#047857"/>
+                <circle cx="200" cy="320" r="22" fill="#0f172a"/>
+                <circle cx="312" cy="380" r="22" fill="#0f172a"/>
+            </svg>`;
+            const iconUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgIcon);
+
+            const manifest = {
+                name: 'ثبت امتیاز دومینه',
+                short_name: 'دومینه',
+                description: 'اپلیکیشن لوکال ثبت امتیاز بازی دومینه',
+                start_url: '.',
+                display: 'standalone',
+                background_color: '#022c22',
+                theme_color: '#064e3b',
+                dir: 'rtl',
+                lang: 'fa',
+                icons: [
+                    { src: iconUrl, sizes: '192x192', type: 'image/svg+xml' },
+                    { src: iconUrl, sizes: '512x512', type: 'image/svg+xml' }
+                ]
+            };
+
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = URL.createObjectURL(manifestBlob);
+            document.head.appendChild(manifestLink);
+
+            // Register Service Worker using Blob if origin allows
+            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                const swCode = `
+                    const CACHE_NAME = 'domino-pwa-v1';
+                    self.addEventListener('install', e => self.skipWaiting());
+                    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+                    self.addEventListener('fetch', e => {
+                        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                    });
+                `;
+                try {
+                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+                } catch (err) {}
+            }
+        }
+
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStateFromStorage();
+            initEvents();
+            updateHomeScreenState();
+            renderHistoryDrawer();
+            setupLocalPWA();
+        });
+    </script>
+</body>
+</html>
